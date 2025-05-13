@@ -1,4 +1,4 @@
-# PJBL---Cifrador-Arquivos
-Cifrador de arquivos desenvolvido durante o 3 periodo de cibersegurança.
+# PJBL-Keygen
+Keygen desenvolvido durante o 3 periodo de cibersegurança.
 
 Creditos: Vithor, Pedro, Leo
