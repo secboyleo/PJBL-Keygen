@@ -1,4 +1,4 @@
-package entities;
+package Software_real.entities;
 
 public class User {
     private String email;
