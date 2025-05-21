@@ -6,7 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 
-public class Program {
+public class Gravar {
     public static void main(String[] args) throws IOException {
         User user = new User("leo@gmail.com", "secboyleo", "photoshop");
         FileOutputStream fileOut = new FileOutputStream("teste.arquivo");
