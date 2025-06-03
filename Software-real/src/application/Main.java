@@ -3,6 +3,7 @@ import entidades.CodigoUnicoGenerator;
 import entidades.Usuario;
 import entidades.Licenca; // Importe a nova classe
 import exception.ExcessaoGenerator;
+import exception.ExcessaoGerarArquivo;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;   
@@ -12,10 +13,11 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate; 
 
 public class Main {
-    public static void main(String[] args) throws NoSuchAlgorithmException, ExcessaoGenerator {
+    public static void main(String[] args) throws NoSuchAlgorithmException, ExcessaoGenerator, ExcessaoGerarArquivo {
         Usuario usuario = new Usuario("Leo", "leo@gmail.com", "2");
         String codigoGerado = null;
         try {
+
             codigoGerado = CodigoUnicoGenerator.gerarCodigo(usuario.getIdentificador());
             System.out.println("CODIGO GERADO: " + codigoGerado);
 
@@ -24,11 +26,11 @@ public class Main {
                 writer.write(codigoGerado);
                 System.out.println("Código gerado salvo em codigo_gerado.txt");
             } catch (IOException e) {
-                System.err.println("Erro ao salvar o código no arquivo: " + e.getMessage());
+                throw new ExcessaoGerarArquivo("Erro ao passar o hash!");
             }
-            
 
-        } catch (ExcessaoGenerator e) {
+
+        } catch (ExcessaoGenerator | ExcessaoGerarArquivo e) {
             System.err.println(e.getMessage());
         }
 
