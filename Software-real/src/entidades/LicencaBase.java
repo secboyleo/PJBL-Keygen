@@ -20,4 +20,40 @@ public abstract class LicencaBase {
     public abstract boolean verificarValidade();
     public abstract boolean ativarLicenca();
     public abstract void desativarLicenca();
+
+    @Override
+    public String toString() {
+        return "Licenca [Código=" + codigo + ", Usuário=" + usuario.getIdentificador() +
+                ", Emissão=" + dataEmissao + ", Expiração=" + dataExpiracao +
+                ", Ativa=" + ativa + "]";
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public LocalDate getDataEmissao() {
+        return dataEmissao;
+    }
+
+    public LocalDate getDataExpiracao() {
+        return dataExpiracao;
+    }
+
+    public boolean getAtiva(){
+        return ativa;
+    }
+
+    public boolean isAtiva() {
+        return ativa;
+    }
+
+    //metodo que muda o estado da licenca
+    public void setAtiva(boolean ativa){
+        this.ativa = ativa;
+    }
 }

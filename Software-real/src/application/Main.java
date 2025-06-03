@@ -1,7 +1,8 @@
 package application;
 import entidades.CodigoUnicoGenerator;
+import entidades.LicencaPremium;
+import entidades.LicencaTrial;
 import entidades.Usuario;
-import entidades.Licenca; // Importe a nova classe
 import exception.ExcessaoGenerator;
 import exception.ExcessaoGerarArquivo;
 
@@ -41,11 +42,16 @@ public class Main {
 
         // Somente cria a licença se o código foi gerado com sucesso
         if (codigoGerado != null) {
-            Licenca licencaDoLeo = new Licenca(codigoGerado, usuario, dataEmissao, dataExpiracao);
+            LicencaPremium licencaDoLeo = new LicencaPremium(codigoGerado, usuario, dataEmissao, dataExpiracao);
+            LicencaTrial licencaTrial = new LicencaTrial(codigoGerado, usuario, dataEmissao);
 
             System.out.println("STATUS DA LICENÇA:");
             System.out.println(licencaDoLeo.toString());
             System.out.println("Licença válida? " + licencaDoLeo.verificarValidade());
+
+            System.out.println();
+            System.out.println("LICENCA TRIAL");
+            System.out.println(licencaTrial.toString());
             
         } else {
             System.out.println("Não foi possível criar a licença pois o código não foi gerado.");
