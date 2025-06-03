@@ -4,18 +4,32 @@ import entidades.Usuario;
 import entidades.Licenca; // Importe a nova classe
 import exception.ExcessaoGenerator;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;   
+import java.io.IOException;
+
 import java.security.NoSuchAlgorithmException;
-import java.time.LocalDate; // Importe LocalDate
+import java.time.LocalDate; 
 
 public class Main {
     public static void main(String[] args) throws NoSuchAlgorithmException, ExcessaoGenerator {
-        Usuario usuario = new Usuario("Leo", "leo@gmail.com", "1");
+        Usuario usuario = new Usuario("Leo", "leo@gmail.com", "2");
         String codigoGerado = null;
         try {
             codigoGerado = CodigoUnicoGenerator.gerarCodigo(usuario.getIdentificador());
             System.out.println("CODIGO GERADO: " + codigoGerado);
+
+            //salvar em txt
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("codigo_gerado.txt"))) {
+                writer.write(codigoGerado);
+                System.out.println("Código gerado salvo em codigo_gerado.txt");
+            } catch (IOException e) {
+                System.err.println("Erro ao salvar o código no arquivo: " + e.getMessage());
+            }
+            
+
         } catch (ExcessaoGenerator e) {
-            e.getMessage();
+            System.err.println(e.getMessage());
         }
 
         // Criando uma licença para o usuário
@@ -23,17 +37,16 @@ public class Main {
         LocalDate dataEmissao = LocalDate.now();
         LocalDate dataExpiracao = dataEmissao.plusYears(1); // Licença válida por 1 ano
 
-        Licenca licencaDoLeo = new Licenca(codigoGerado, usuario, dataEmissao, dataExpiracao);
+        // Somente cria a licença se o código foi gerado com sucesso
+        if (codigoGerado != null) {
+            Licenca licencaDoLeo = new Licenca(codigoGerado, usuario, dataEmissao, dataExpiracao);
 
-        System.out.println("STATUS DA LICENÇA:");
-        System.out.println(licencaDoLeo.toString());
-        System.out.println("Licença válida? " + licencaDoLeo.verificarValidade());
-
-        // Exemplo de desativação e reativação
-//        licencaDoLeo.desativarLicenca();
-//        System.out.println("Licença válida após desativação? " + licencaDoLeo.verificarValidade());
-//
-//        licencaDoLeo.ativarLicenca();
-//        System.out.println("Licença válida após reativação? " + licencaDoLeo.verificarValidade());
+            System.out.println("STATUS DA LICENÇA:");
+            System.out.println(licencaDoLeo.toString());
+            System.out.println("Licença válida? " + licencaDoLeo.verificarValidade());
+            
+        } else {
+            System.out.println("Não foi possível criar a licença pois o código não foi gerado.");
+        }
     }
 }
