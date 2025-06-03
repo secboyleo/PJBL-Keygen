@@ -2,10 +2,12 @@ package application;
 import entidades.CodigoUnicoGenerator;
 import entidades.Usuario;
 import entidades.Licenca; // Importe a nova classe
+
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate; // Importe LocalDate
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) throws NoSuchAlgorithmException {
         Usuario usuario = new Usuario("Leo", "leo@gmail.com" , "1");
         String codigoGerado = CodigoUnicoGenerator.gerarCodigo(usuario.getIdentificador());
         System.out.println("CODIGO GERADO: " + codigoGerado);
