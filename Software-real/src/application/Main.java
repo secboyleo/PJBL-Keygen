@@ -2,15 +2,21 @@ package application;
 import entidades.CodigoUnicoGenerator;
 import entidades.Usuario;
 import entidades.Licenca; // Importe a nova classe
+import exception.ExcessaoGenerator;
 
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate; // Importe LocalDate
 
 public class Main {
-    public static void main(String[] args) throws NoSuchAlgorithmException {
-        Usuario usuario = new Usuario("Leo", "leo@gmail.com" , "1");
-        String codigoGerado = CodigoUnicoGenerator.gerarCodigo(usuario.getIdentificador());
-        System.out.println("CODIGO GERADO: " + codigoGerado);
+    public static void main(String[] args) throws NoSuchAlgorithmException, ExcessaoGenerator {
+        Usuario usuario = new Usuario("Leo", "leo@gmail.com", "1");
+        String codigoGerado = null;
+        try {
+            codigoGerado = CodigoUnicoGenerator.gerarCodigo(usuario.getIdentificador());
+            System.out.println("CODIGO GERADO: " + codigoGerado);
+        } catch (ExcessaoGenerator e) {
+            e.getMessage();
+        }
 
         // Criando uma licença para o usuário
         // A licença é válida por 1 ano a partir de hoje
