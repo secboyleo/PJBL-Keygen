@@ -1,9 +1,10 @@
-# PJBL-Keygen
+# Sistema gerenciamento do escola
 ### Nomes: Leonardo de Goes da Silva, Pedro Arthur Melo, Vithor Augusto Andrade                                                                                                                                                                                                                       
 
-## Tema: Keygen
+## Tema: Sistema de gerenciamento de escola
 
 ### Objetivo:
-Temos como Objetivo desenvolver um keygen em java que seja capaz de gerar um codigo que seja valido para crackear software (de forma simulada).
+Temos como objetivo criar um sistema de gerenciamento para escolas a partir do registro de alunos, professores, cursos e disciplinas presentes na instituiçao
 
-Sera feito um sistema para validar o codigo gerado, e outro que seria o keygen em si (gera um codigo para crackear o software).
+primeiramente pensamoes em um keygen, depois em um winrar, e agora em um sistema de gerenciamento de escolas 
+ng sabe como ta a mente do coringa
