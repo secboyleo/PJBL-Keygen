@@ -12,20 +12,37 @@ import excessoes.ProfessorNaoEncontrado;
 import java.io.*;
 import java.util.ArrayList;
 
+<<<<<<< HEAD
 public class GerenciadorSistema {
+=======
+public class GerenciadorSistema implements Serializable{
+>>>>>>> main
     private ArrayList<Aluno> alunos;
     private ArrayList<Professor> professores;
     private ArrayList<Curso> cursos;
     private ArrayList<Disciplina> disciplinas;
+<<<<<<< HEAD
+=======
+    private int nextMatriculo;
+>>>>>>> main
 
     public GerenciadorSistema(){
         this.alunos = new ArrayList<>();
         this.professores =  new ArrayList<>();
         this.cursos = new ArrayList<>();
         this.disciplinas = new ArrayList<>();
+<<<<<<< HEAD
     }
 
     public void cadastrarAluno(Aluno aluno){
+=======
+        this.nextMatriculo = 1001;
+    }
+
+    public void cadastrarAluno(Aluno aluno){
+        aluno.setMatricula(this.nextMatriculo);
+        this.nextMatriculo ++;
+>>>>>>> main
         alunos.add(aluno);
     }
 
@@ -42,9 +59,15 @@ public class GerenciadorSistema {
     }
 
     //busca aluno, professor curso e disciplinas---------------------------------------------------------------------
+<<<<<<< HEAD
     public String buscarAluno(String matricula) throws AlunoNaoEncontrado {
         for(Aluno aluno : alunos){
             if(aluno.getMatricula().equals(matricula)){ return aluno.exibirInformacoes(); }
+=======
+    public String buscarAluno(int matricula) throws AlunoNaoEncontrado {
+        for(Aluno aluno : alunos){
+            if(aluno.getMatricula() == matricula){ return aluno.exibirInformacoes(); }
+>>>>>>> main
         }
 
         throw new AlunoNaoEncontrado("Aluno com matricula: " + matricula + ", nao foi encontrado");
@@ -74,6 +97,58 @@ public class GerenciadorSistema {
         throw new DiscplinaNaoEncontrada("Discplina com o codigo: " + codigo + ", nao encontrada");
     }
 
+<<<<<<< HEAD
+=======
+    //PERSISTENCIA DE DADOOOOSSSSSSSSSSSSSSSS (somente para os tung tung tungzitos)
+    public void carregarAlunosDeArquivo(String nomeArquivo) {
+        try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] data = line.split(",");
+                if (data.length == 4) {
+                    Aluno aluno = new Aluno(data[0], data[1], data[2], data[3]);
+                    this.cadastrarAluno(aluno);
+                }
+            }
+            System.out.println("Alunos carregados do arquivo: " + nomeArquivo);
+        } catch (IOException e) {
+            System.err.println("Erro ao carregar alunos do arquivo: " + e.getMessage());
+        }
+    }
+
+    //PERSISTENCIA DE OBJETOS (ARRAYS DESTA CLASSE )
+    public void salvarDados(String nomeArquivo) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(nomeArquivo))) {
+            oos.writeObject(this.alunos);
+            oos.writeObject(this.professores);
+            oos.writeObject(this.cursos);
+            oos.writeObject(this.disciplinas);
+            System.out.println("Dados salvos com sucesso em: " + nomeArquivo);
+        } catch (IOException e) {
+            System.err.println("Erro ao salvar dados: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked") // Para suprimir o aviso de conversão não verificada
+    public void carregarDados(String nomeArquivo){
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
+            this.alunos = (ArrayList<Aluno>) ois.readObject();
+            this.professores = (ArrayList<Professor>) ois.readObject();
+            this.cursos = (ArrayList<Curso>) ois.readObject();
+            this.disciplinas = (ArrayList<Disciplina>) ois.readObject();
+            System.out.println("Dados carregados com sucesso de: " + nomeArquivo);
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Erro ao carregar dados: " + e.getMessage());
+            // Se o arquivo não existir ou estiver corrompido, comece com listas vazias
+            this.alunos = new ArrayList<>();
+            this.professores = new ArrayList<>();
+            this.cursos = new ArrayList<>();
+            this.disciplinas = new ArrayList<>();
+            this.nextMatriculo = 1001; //reinicia a contagem se nao puder carregar
+        }
+    }
+
+>>>>>>> main
     //mostrar arrays-------------------------------------------------------------------------------------------------------------------
     public void mostrarAlunos(){
         System.out.println("-----------ALUNOS------------");
