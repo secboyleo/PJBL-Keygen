@@ -15,13 +15,15 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) throws ClassNotFoundException {
+    private static final String DADOS_ARQUIVO = "escola.dat";
+
+    public static void main(String[] args) {
         System.out.println("SISTEMA GERENCIAMENTO DE ESCOLA");
         Scanner sc = new Scanner(System.in);
 
         GerenciadorSistema gerenciadorSistema = new GerenciadorSistema();
-        gerenciadorSistema.carregarDados("escola.dat"); //carregando dados do arquivo escola.dat
-        gerenciadorSistema.carregarAlunosDeArquivo("alunos.txt"); //puxando alunos do arquivo alunos.txt
+        gerenciadorSistema.carregarDados(DADOS_ARQUIVO);
+        gerenciadorSistema.carregarAlunosDeArquivo("alunos.txt"); // COMENTADO: usar apenas a serialização para evitar conflitos de matrícula e dados
 
         boolean flag = true;
         while (flag){
@@ -37,7 +39,7 @@ public class Main {
                 opcao = sc.nextInt();
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Por favor, digite um número.");
-                sc.next(); // Consume the invalid input
+                sc.next();
                 System.out.println();
                 continue;
             }
@@ -71,7 +73,7 @@ public class Main {
                 } else if (opcao == 2) {
                     System.out.println("Cadastre o aluno");
                     System.out.print("Nome: ");
-                    sc.nextLine(); // Consume newline left-over
+                    sc.nextLine();
                     String nome = sc.nextLine();
 
                     System.out.print("Sobrenome: ");
@@ -83,18 +85,23 @@ public class Main {
                     System.out.print("Data Nascimento (dd/mm/yyyy): ");
                     String dataNascimento = sc.next();
 
-                    System.out.print("Matricula: ");
-                    String matricula = sc.next();
 
-                    Aluno aluno = new Aluno(nome, sobrenome, cpf, dataNascimento, matricula);
-
+                    Aluno aluno = new Aluno(nome, sobrenome, cpf, dataNascimento);
                     gerenciadorSistema.cadastrarAluno(aluno);
-                    System.out.println("ALUNO CADASTRADO!");
+                    System.out.println("ALUNO CADASTRADO COM MATRICULA: " + aluno.getMatricula() + "!");
                     System.out.println(aluno.exibirInformacoes());
                     System.out.println();
                 } else if (opcao == 3) {
                     System.out.print("Digite a matrícula do aluno para buscar: ");
-                    String matriculaBusca = sc.next();
+                    int matriculaBusca = -1;
+                    try {
+                        matriculaBusca = sc.nextInt();
+                    } catch (InputMismatchException e) {
+                        System.out.println("Entrada inválida para matrícula. Por favor, digite um número inteiro.");
+                        sc.next();
+                        System.out.println();
+                        continue;
+                    }
                     try {
                         String infoAluno = gerenciadorSistema.buscarAluno(matriculaBusca);
                         System.out.println(infoAluno);
@@ -108,13 +115,21 @@ public class Main {
                         System.out.println();
                     } else {
                         System.out.print("Digite a matrícula do aluno: ");
-                        String matriculaAluno = sc.next();
+                        int matriculaAluno = -1;
+                        try {
+                            matriculaAluno = sc.nextInt();
+                        } catch (InputMismatchException e) {
+                            System.out.println("Entrada inválida para matrícula. Por favor, digite um número inteiro.");
+                            sc.next();
+                            System.out.println();
+                            continue;
+                        }
                         System.out.print("Digite o código do curso para matricular: ");
                         String codigoCurso = sc.next();
 
                         Aluno alunoSelecionado = null;
                         for (Aluno a : gerenciadorSistema.getAlunos()) {
-                            if (a.getMatricula().equals(matriculaAluno)) {
+                            if (a.getMatricula() == matriculaAluno) {
                                 alunoSelecionado = a;
                                 break;
                             }
@@ -166,7 +181,7 @@ public class Main {
                 } else if (opcao == 2) {
                     System.out.println("Cadastre o professor");
                     System.out.print("Nome: ");
-                    sc.nextLine(); // Consume newline left-over
+                    sc.nextLine();
                     String nome = sc.nextLine();
 
                     System.out.print("Sobrenome: ");
@@ -283,7 +298,7 @@ public class Main {
                 } else if (opcao == 2) {
                     System.out.println("Crie o curso");
                     System.out.print("Nome do Curso: ");
-                    sc.nextLine(); // Consume newline left-over
+                    sc.nextLine();
                     String nomeCurso = sc.nextLine();
 
                     System.out.print("Codigo do Curso: ");
@@ -371,7 +386,7 @@ public class Main {
                 } else if (opcao == 2) {
                     System.out.println("Crie a disciplina");
                     System.out.print("Nome da Disciplina: ");
-                    sc.nextLine(); // Consume newline left-over
+                    sc.nextLine();
                     String nomeDisciplina = sc.nextLine();
 
                     System.out.print("Codigo da Disciplina: ");
@@ -410,7 +425,7 @@ public class Main {
                     System.out.println();
                 }
             } else if (opcao == 5) {
-                gerenciadorSistema.salvarDados("escola.dat");
+                gerenciadorSistema.salvarDados(DADOS_ARQUIVO); 
                 flag = false;
                 System.out.println("Saindo do sistema. Até mais!");
             } else {

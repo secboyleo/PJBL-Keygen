@@ -17,15 +17,19 @@ public class GerenciadorSistema implements Serializable{
     private ArrayList<Professor> professores;
     private ArrayList<Curso> cursos;
     private ArrayList<Disciplina> disciplinas;
+    private int nextMatriculo;
 
     public GerenciadorSistema(){
         this.alunos = new ArrayList<>();
         this.professores =  new ArrayList<>();
         this.cursos = new ArrayList<>();
         this.disciplinas = new ArrayList<>();
+        this.nextMatriculo = 1001;
     }
 
     public void cadastrarAluno(Aluno aluno){
+        aluno.setMatricula(this.nextMatriculo);
+        this.nextMatriculo ++;
         alunos.add(aluno);
     }
 
@@ -42,9 +46,9 @@ public class GerenciadorSistema implements Serializable{
     }
 
     //busca aluno, professor curso e disciplinas---------------------------------------------------------------------
-    public String buscarAluno(String matricula) throws AlunoNaoEncontrado {
+    public String buscarAluno(int matricula) throws AlunoNaoEncontrado {
         for(Aluno aluno : alunos){
-            if(aluno.getMatricula().equals(matricula)){ return aluno.exibirInformacoes(); }
+            if(aluno.getMatricula() == matricula){ return aluno.exibirInformacoes(); }
         }
 
         throw new AlunoNaoEncontrado("Aluno com matricula: " + matricula + ", nao foi encontrado");
@@ -80,8 +84,8 @@ public class GerenciadorSistema implements Serializable{
             String line;
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length == 5) {
-                    Aluno aluno = new Aluno(data[0], data[1], data[2], data[3], data[4]);
+                if (data.length == 4) {
+                    Aluno aluno = new Aluno(data[0], data[1], data[2], data[3]);
                     this.cadastrarAluno(aluno);
                 }
             }
@@ -119,6 +123,7 @@ public class GerenciadorSistema implements Serializable{
             this.professores = new ArrayList<>();
             this.cursos = new ArrayList<>();
             this.disciplinas = new ArrayList<>();
+            this.nextMatriculo = 1001; //reinicia a contagem se nao puder carregar
         }
     }
 
