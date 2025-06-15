@@ -4,18 +4,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Aluno extends Pessoa implements Serializable {
-<<<<<<< HEAD
-    private String matricula;
-    private ArrayList<Curso> cursos;
-
-    public Aluno(String nome, String sobrenome, String cpf, String dataNascimento, String matricula){
-        super(nome, sobrenome, cpf, dataNascimento);
-        this.matricula = matricula;
-        this.cursos = new ArrayList<>();
-    }
-
-    public String getMatricula(){ return this.matricula; }
-=======
     private int matricula;
     private ArrayList<Curso> cursos;
 
@@ -26,7 +14,6 @@ public class Aluno extends Pessoa implements Serializable {
 
     public int getMatricula(){ return this.matricula; }
     public void setMatricula(int matricula) { this.matricula = matricula; }
->>>>>>> main
     public ArrayList<Curso> getCursosMatriculados() { return this.cursos; }
 
     //adiciona no curso somente se ja nao estiver

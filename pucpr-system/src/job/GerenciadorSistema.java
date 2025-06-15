@@ -12,37 +12,24 @@ import excessoes.ProfessorNaoEncontrado;
 import java.io.*;
 import java.util.ArrayList;
 
-<<<<<<< HEAD
-public class GerenciadorSistema {
-=======
 public class GerenciadorSistema implements Serializable{
->>>>>>> main
     private ArrayList<Aluno> alunos;
     private ArrayList<Professor> professores;
     private ArrayList<Curso> cursos;
     private ArrayList<Disciplina> disciplinas;
-<<<<<<< HEAD
-=======
     private int nextMatriculo;
->>>>>>> main
 
     public GerenciadorSistema(){
         this.alunos = new ArrayList<>();
         this.professores =  new ArrayList<>();
         this.cursos = new ArrayList<>();
         this.disciplinas = new ArrayList<>();
-<<<<<<< HEAD
-    }
-
-    public void cadastrarAluno(Aluno aluno){
-=======
         this.nextMatriculo = 1001;
     }
 
     public void cadastrarAluno(Aluno aluno){
         aluno.setMatricula(this.nextMatriculo);
         this.nextMatriculo ++;
->>>>>>> main
         alunos.add(aluno);
     }
 
@@ -59,15 +46,9 @@ public class GerenciadorSistema implements Serializable{
     }
 
     //busca aluno, professor curso e disciplinas---------------------------------------------------------------------
-<<<<<<< HEAD
-    public String buscarAluno(String matricula) throws AlunoNaoEncontrado {
-        for(Aluno aluno : alunos){
-            if(aluno.getMatricula().equals(matricula)){ return aluno.exibirInformacoes(); }
-=======
     public String buscarAluno(int matricula) throws AlunoNaoEncontrado {
         for(Aluno aluno : alunos){
             if(aluno.getMatricula() == matricula){ return aluno.exibirInformacoes(); }
->>>>>>> main
         }
 
         throw new AlunoNaoEncontrado("Aluno com matricula: " + matricula + ", nao foi encontrado");
@@ -97,8 +78,6 @@ public class GerenciadorSistema implements Serializable{
         throw new DiscplinaNaoEncontrada("Discplina com o codigo: " + codigo + ", nao encontrada");
     }
 
-<<<<<<< HEAD
-=======
     //PERSISTENCIA DE DADOOOOSSSSSSSSSSSSSSSS (somente para os tung tung tungzitos)
     public void carregarAlunosDeArquivo(String nomeArquivo) {
         try (BufferedReader br = new BufferedReader(new FileReader(nomeArquivo))) {
@@ -148,7 +127,6 @@ public class GerenciadorSistema implements Serializable{
         }
     }
 
->>>>>>> main
     //mostrar arrays-------------------------------------------------------------------------------------------------------------------
     public void mostrarAlunos(){
         System.out.println("-----------ALUNOS------------");
