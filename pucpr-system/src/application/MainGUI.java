@@ -16,7 +16,7 @@ public class MainGUI extends JFrame {
         super("Sistema de Gerenciamento Escolar");
         gerenciadorSistema = new GerenciadorSistema();
         gerenciadorSistema.carregarDados(DADOS_ARQUIVO); // carrge os dados do escola.dat
-        //gerenciadorSistema.carregarAlunosDeArquivo("alunos.txt"); // carrega os dados do alunos.txt
+        gerenciadorSistema.carregarAlunosDeArquivo("alunos.txt"); // carrega os dados do alunos.txt
 
         // configuração da janela principal
         setSize(800, 600);

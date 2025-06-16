@@ -17,40 +17,71 @@ public class GerenciadorSistema implements Serializable{
     private ArrayList<Professor> professores;
     private ArrayList<Curso> cursos;
     private ArrayList<Disciplina> disciplinas;
-    private int nextMatriculo;
+
+    private int nextMatricula;
+    private int nextProfessorId;
+    private int nextCursoId;
+    private int nextDisciplinaId;
 
     public GerenciadorSistema(){
         this.alunos = new ArrayList<>();
         this.professores =  new ArrayList<>();
         this.cursos = new ArrayList<>();
         this.disciplinas = new ArrayList<>();
-        this.nextMatriculo = 1001;
+
+        this.nextMatricula = 1001;
+        this.nextProfessorId = 1;
+        this.nextCursoId = 1;
+        this.nextDisciplinaId = 1;
     }
 
-    public void cadastrarAluno(Aluno aluno){
-        aluno.setMatricula(this.nextMatriculo);
-        this.nextMatriculo ++;
+    public boolean cadastrarAluno(Aluno aluno){
+        for(Aluno a : alunos) {
+            if (a.getCpf().equals(aluno.getCpf())) {
+                return false;
+            }
+        }
+        aluno.setMatricula(this.nextMatricula);
+        this.nextMatricula++;
         alunos.add(aluno);
+        return true;
     }
 
-    public void cadastrarProfessor(Professor professor){
+    public boolean cadastrarProfessor(Professor professor){
+        for(Professor p : professores) {
+            if (p.getCpf().equals(professor.getCpf())) {
+                return false;
+            }
+        }
+        professor.setId(this.nextProfessorId);
+        this.nextProfessorId++;
         professores.add(professor);
+        return true;
     }
 
-    public void criarCurso(Curso curso){
+    public boolean criarCurso(Curso curso){
+        // A verificação de duplicidade por código do usuário foi removida.
+        // O ID garantirá a unicidade.
+        curso.setId(this.nextCursoId);
+        curso.setCodigo(String.valueOf(this.nextCursoId)); // Define o código com base no ID
+        this.nextCursoId++;
         cursos.add(curso);
+        return true;
     }
 
-    public void criarDisciplina(Disciplina disciplina){
+    public boolean criarDisciplina(Disciplina disciplina){
+        // A verificação de duplicidade por código do usuário foi removida.
+        disciplina.setId(this.nextDisciplinaId);
+        disciplina.setCodigo(String.valueOf(this.nextDisciplinaId)); // Define o código com base no ID
+        this.nextDisciplinaId++;
         disciplinas.add(disciplina);
+        return true;
     }
 
-    //busca aluno, professor curso e disciplinas---------------------------------------------------------------------
     public String buscarAluno(int matricula) throws AlunoNaoEncontrado {
         for(Aluno aluno : alunos){
             if(aluno.getMatricula() == matricula){ return aluno.exibirInformacoes(); }
         }
-
         throw new AlunoNaoEncontrado("Aluno com matricula: " + matricula + ", nao foi encontrado");
     }
 
@@ -58,24 +89,22 @@ public class GerenciadorSistema implements Serializable{
         for(Professor professor : professores){
             if(professor.getCpf().equals(cpf)){ return professor.exibirInformacoes(); }
         }
-
         throw new ProfessorNaoEncontrado("Professor com cpf: " + cpf + ", nao foi encontrado");
     }
 
+    // A busca ainda funciona com o código, que agora é a string do ID.
     public String buscaCurso(String codigo) throws CursoNaoEncontrado {
         for(Curso curso : cursos){
-            if(curso.getCodigo().equals(codigo)){ return "Curso:" + curso.getNome() + " | Codigo: " + curso.getCodigo(); }
+            if(curso.getCodigo().equals(codigo)){ return curso.toString(); }
         }
-
-        throw new CursoNaoEncontrado("Curso com codigo: " + codigo + ", nao foi encontrado");
+        throw new CursoNaoEncontrado("Curso com ID: " + codigo + ", nao foi encontrado");
     }
 
     public String buscaDiscplina(String codigo) throws DiscplinaNaoEncontrada {
         for(Disciplina disciplina : disciplinas){
-            if(disciplina.getCodigo().equals(codigo)){ return "Discplina:" + disciplina.getNome() + " | Codigo: " + disciplina.getCodigo();}
+            if(disciplina.getCodigo().equals(codigo)){ return disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h";}
         }
-
-        throw new DiscplinaNaoEncontrada("Discplina com o codigo: " + codigo + ", nao encontrada");
+        throw new DiscplinaNaoEncontrada("Discplina com ID: " + codigo + ", nao encontrada");
     }
 
     //PERSISTENCIA DE DADOOOOSSSSSSSSSSSSSSSS (somente para os tung tung tungzitos)
@@ -102,28 +131,38 @@ public class GerenciadorSistema implements Serializable{
             oos.writeObject(this.professores);
             oos.writeObject(this.cursos);
             oos.writeObject(this.disciplinas);
+            oos.writeObject(this.nextMatricula);
+            oos.writeObject(this.nextProfessorId);
+            oos.writeObject(this.nextCursoId);
+            oos.writeObject(this.nextDisciplinaId);
             System.out.println("Dados salvos com sucesso em: " + nomeArquivo);
         } catch (IOException e) {
             System.err.println("Erro ao salvar dados: " + e.getMessage());
         }
     }
 
-    @SuppressWarnings("unchecked") // Para suprimir o aviso de conversão não verificada
+    @SuppressWarnings("unchecked")
     public void carregarDados(String nomeArquivo){
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(nomeArquivo))) {
             this.alunos = (ArrayList<Aluno>) ois.readObject();
             this.professores = (ArrayList<Professor>) ois.readObject();
             this.cursos = (ArrayList<Curso>) ois.readObject();
             this.disciplinas = (ArrayList<Disciplina>) ois.readObject();
+            this.nextMatricula = (int) ois.readObject();
+            this.nextProfessorId = (int) ois.readObject();
+            this.nextCursoId = (int) ois.readObject();
+            this.nextDisciplinaId = (int) ois.readObject();
             System.out.println("Dados carregados com sucesso de: " + nomeArquivo);
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Erro ao carregar dados: " + e.getMessage());
-            // Se o arquivo não existir ou estiver corrompido, comece com listas vazias
             this.alunos = new ArrayList<>();
             this.professores = new ArrayList<>();
             this.cursos = new ArrayList<>();
             this.disciplinas = new ArrayList<>();
-            this.nextMatriculo = 1001; //reinicia a contagem se nao puder carregar
+            this.nextMatricula = 1001;
+            this.nextProfessorId = 1;
+            this.nextCursoId = 1;
+            this.nextDisciplinaId = 1;
         }
     }
 

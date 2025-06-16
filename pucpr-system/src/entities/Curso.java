@@ -4,18 +4,25 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Curso implements Serializable {
+    private int id;
     private String nome;
-    private String codigo;
+    private String codigo; // O código ainda existe, mas será gerenciado internamente
     private ArrayList<Disciplina> disciplinasCurso;
 
-    public Curso(String nome, String codigo){
+    // CONSTRUTOR MODIFICADO: não recebe mais o código
+    public Curso(String nome){
         this.nome = nome;
-        this.codigo = codigo;
         this.disciplinasCurso = new ArrayList<>();
     }
 
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
+
     public String getNome(){return this.nome;}
+
     public String getCodigo(){return this.codigo;}
+    public void setCodigo(String codigo) { this.codigo = codigo; } // Setter para o código
+
     public ArrayList<Disciplina> getDisciplinasCurso() {
         return disciplinasCurso;
     }
@@ -27,9 +34,7 @@ public class Curso implements Serializable {
     }
 
     @Override
-    public String toString() { return "Curso: " + nome + " | Código: " + codigo; }
-
-//    public void matricularAluno(Aluno aluno){
-//        aluno.matricularEmCurso();
-//    }
+    public String toString() {
+        return "ID: " + id + " | Curso: " + nome;
+    }
 }

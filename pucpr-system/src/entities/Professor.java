@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 public class Professor extends Pessoa implements Serializable {
+    private int id;
     private double salario;
     private ArrayList<Disciplina> disciplinas;
 
@@ -12,6 +13,10 @@ public class Professor extends Pessoa implements Serializable {
         this.salario = salario;
         this.disciplinas = new ArrayList<>();
     }
+
+    // NOVOS MÉTODOS GET/SET
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
     public double getSalario(){return this.salario; }
 
@@ -23,7 +28,8 @@ public class Professor extends Pessoa implements Serializable {
 
     @Override
     public String exibirInformacoes() {
-        return "Nome Professor: " + nome + " " + sobrenome + "\nCPF: " + cpf + "\nData Nascimento:" + dataNascimento + "\nSalario: " + salario + "\nDisciplinas:\n" + disciplinas;
+        // ID ADICIONADO NA EXIBIÇÃO
+        return "ID Professor: " + id + "\nNome Professor: " + nome + " " + sobrenome + "\nCPF: " + cpf + "\nData Nascimento:" + dataNascimento + "\nSalario: " + salario + "\nDisciplinas:\n" + disciplinas;
     }
 
     @Override

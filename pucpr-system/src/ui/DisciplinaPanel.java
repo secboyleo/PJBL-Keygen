@@ -30,7 +30,7 @@ public class DisciplinaPanel extends JPanel {
         btnCriarDisciplina.addActionListener(e -> criarDisciplina());
         buttonPanel.add(btnCriarDisciplina);
 
-        JButton btnBuscarDisciplina = new JButton("Buscar Disciplina");
+        JButton btnBuscarDisciplina = new JButton("Buscar Disciplina por ID"); // Texto do botão atualizado
         btnBuscarDisciplina.addActionListener(e -> buscarDisciplina());
         buttonPanel.add(btnBuscarDisciplina);
 
@@ -51,44 +51,52 @@ public class DisciplinaPanel extends JPanel {
     }
 
     private void criarDisciplina() {
-        JTextField nomeDisciplinaField = new JTextField();
-        JTextField codigoDisciplinaField = new JTextField();
-        JTextField cargaHorariaField = new JTextField();
+        while (true) {
+            JTextField nomeDisciplinaField = new JTextField();
+            JTextField cargaHorariaField = new JTextField();
 
-        Object[] message = {
-                "Nome da Disciplina:", nomeDisciplinaField,
-                "Código da Disciplina:", codigoDisciplinaField,
-                "Carga Horária:", cargaHorariaField
-        };
+            // Campo de código removido
+            Object[] message = {
+                    "Nome da Disciplina:", nomeDisciplinaField,
+                    "Carga Horária:", cargaHorariaField
+            };
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Criar Disciplina", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String nomeDisciplina = nomeDisciplinaField.getText();
-            String codigoDisciplina = codigoDisciplinaField.getText();
-            String cargaHorariaStr = cargaHorariaField.getText();
+            int option = JOptionPane.showConfirmDialog(this, message, "Criar Disciplina", JOptionPane.OK_CANCEL_OPTION);
 
-            if (nomeDisciplina.isEmpty() || codigoDisciplina.isEmpty() || cargaHorariaStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                 return;
             }
 
-            try {
-                int cargaHoraria = Integer.parseInt(cargaHorariaStr);
-                Disciplina disciplina = new Disciplina(nomeDisciplina, codigoDisciplina, cargaHoraria);
-                gerenciadorSistema.criarDisciplina(disciplina);
-                JOptionPane.showMessageDialog(this, "DISCIPLINA CRIADA!\n" + disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h");
-                mostrarDisciplinas(); // Atualiza a lista
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Carga horária inválida. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.OK_OPTION) {
+                String nomeDisciplina = nomeDisciplinaField.getText().trim();
+                String cargaHorariaStr = cargaHorariaField.getText().trim();
+
+                if (nomeDisciplina.isEmpty() || cargaHorariaStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                try {
+                    int cargaHoraria = Integer.parseInt(cargaHorariaStr);
+                    Disciplina disciplina = new Disciplina(nomeDisciplina, cargaHoraria); // Usa o novo construtor
+                    gerenciadorSistema.criarDisciplina(disciplina);
+
+                    JOptionPane.showMessageDialog(this, "DISCIPLINA CRIADA COM ID: " + disciplina.getId() + "!\n" + disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h");
+                    mostrarDisciplinas();
+                    break;
+
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Carga horária inválida. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
 
     private void buscarDisciplina() {
-        String codigoBusca = JOptionPane.showInputDialog(this, "Digite o código da disciplina para buscar:");
-        if (codigoBusca != null && !codigoBusca.trim().isEmpty()) {
+        String idBusca = JOptionPane.showInputDialog(this, "Digite o ID da disciplina para buscar:"); // Pede o ID
+        if (idBusca != null && !idBusca.trim().isEmpty()) {
             try {
-                String infoDisciplina = gerenciadorSistema.buscaDiscplina(codigoBusca);
+                String infoDisciplina = gerenciadorSistema.buscaDiscplina(idBusca.trim());
                 JOptionPane.showMessageDialog(this, infoDisciplina);
             } catch (DiscplinaNaoEncontrada e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Disciplina Não Encontrada", JOptionPane.WARNING_MESSAGE);

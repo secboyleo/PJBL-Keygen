@@ -7,6 +7,9 @@ import job.GerenciadorSistema;
 
 import javax.swing.*;
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class ProfessorPanel extends JPanel {
     private GerenciadorSistema gerenciadorSistema;
@@ -56,41 +59,66 @@ public class ProfessorPanel extends JPanel {
     }
 
     private void cadastrarProfessor() {
-        JTextField nomeField = new JTextField();
-        JTextField sobrenomeField = new JTextField();
-        JTextField cpfField = new JTextField();
-        JTextField dataNascimentoField = new JTextField();
-        JTextField salarioField = new JTextField();
+        while (true) {
+            JTextField nomeField = new JTextField();
+            JTextField sobrenomeField = new JTextField();
+            JTextField cpfField = new JTextField();
+            JTextField dataNascimentoField = new JTextField();
+            JTextField salarioField = new JTextField();
 
-        Object[] message = {
-                "Nome:", nomeField,
-                "Sobrenome:", sobrenomeField,
-                "CPF (xxx.xxx.xxx-xx):", cpfField,
-                "Data Nascimento (dd/mm/yyyy):", dataNascimentoField,
-                "Salário:", salarioField
-        };
+            Object[] message = {
+                    "Nome:", nomeField,
+                    "Sobrenome:", sobrenomeField,
+                    "CPF (xxx.xxx.xxx-xx):", cpfField,
+                    "Data Nascimento (dd/mm/yyyy):", dataNascimentoField,
+                    "Salário:", salarioField
+            };
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Cadastrar Professor", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String nome = nomeField.getText();
-            String sobrenome = sobrenomeField.getText();
-            String cpf = cpfField.getText();
-            String dataNascimento = dataNascimentoField.getText();
-            String salarioStr = salarioField.getText();
+            int option = JOptionPane.showConfirmDialog(this, message, "Cadastrar Professor", JOptionPane.OK_CANCEL_OPTION);
 
-            if (nome.isEmpty() || sobrenome.isEmpty() || cpf.isEmpty() || dataNascimento.isEmpty() || salarioStr.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                 return;
             }
 
-            try {
-                double salario = Double.parseDouble(salarioStr);
-                Professor professor = new Professor(nome, sobrenome, cpf, dataNascimento, salario);
-                gerenciadorSistema.cadastrarProfessor(professor);
-                JOptionPane.showMessageDialog(this, "PROFESSOR CADASTRADO!\n" + professor.exibirInformacoes());
-                mostrarProfessores(); // Atualiza a lista
-            } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Salário inválido. Digite um número.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.OK_OPTION) {
+                String nome = nomeField.getText().trim();
+                String sobrenome = sobrenomeField.getText().trim();
+                String cpf = cpfField.getText().trim();
+                String dataNascimento = dataNascimentoField.getText().trim();
+                String salarioStr = salarioField.getText().trim();
+
+                if (nome.isEmpty() || sobrenome.isEmpty() || cpf.isEmpty() || dataNascimento.isEmpty() || salarioStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                if (!isCpfValido(cpf)) {
+                    JOptionPane.showMessageDialog(this, "Formato de CPF inválido! Use xxx.xxx.xxx-xx", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                if (!isDataValida(dataNascimento)) {
+                    JOptionPane.showMessageDialog(this, "Formato de data inválido! Use dd/mm/yyyy.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                try {
+                    double salario = Double.parseDouble(salarioStr);
+                    Professor professor = new Professor(nome, sobrenome, cpf, dataNascimento, salario);
+
+                    boolean sucesso = gerenciadorSistema.cadastrarProfessor(professor);
+
+                    if (sucesso) {
+                        JOptionPane.showMessageDialog(this, "PROFESSOR CADASTRADO COM ID: " + professor.getId() + "!\n" + professor.exibirInformacoes());
+                        mostrarProfessores();
+                        break;
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Erro: Já existe um professor com este CPF.", "Erro de Duplicidade", JOptionPane.ERROR_MESSAGE);
+                    }
+
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Salário inválido. Digite um número.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
@@ -138,9 +166,26 @@ public class ProfessorPanel extends JPanel {
         if (professorSelecionado != null && disciplinaSelecionada != null) {
             professorSelecionado.adicionarDisciplina(disciplinaSelecionada);
             JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " atribuída ao professor " + professorSelecionado.getNome() + "!");
-            mostrarProfessores(); // atualiza a exibição do professor
+            mostrarProfessores();
         } else {
             JOptionPane.showMessageDialog(this, "Professor ou disciplina não encontrados. Verifique os dados informados.", "Erro de Atribuição", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private boolean isCpfValido(String cpf) {
+        if (cpf == null) return false;
+        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
+        return cpf.matches(cpfRegex);
+    }
+
+    private boolean isDataValida(String data) {
+        if (data == null) return false;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate.parse(data, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
         }
     }
 }

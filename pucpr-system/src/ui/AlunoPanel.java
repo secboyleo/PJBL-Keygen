@@ -7,7 +7,9 @@ import job.GerenciadorSistema;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 public class AlunoPanel extends JPanel {
     private GerenciadorSistema gerenciadorSistema;
@@ -60,34 +62,58 @@ public class AlunoPanel extends JPanel {
     }
 
     private void cadastrarAluno() {
-        JTextField nomeField = new JTextField();
-        JTextField sobrenomeField = new JTextField();
-        JTextField cpfField = new JTextField();
-        JTextField dataNascimentoField = new JTextField();
+        while (true) {
+            JTextField nomeField = new JTextField();
+            JTextField sobrenomeField = new JTextField();
+            JTextField cpfField = new JTextField();
+            JTextField dataNascimentoField = new JTextField();
 
-        Object[] message = {
-                "Nome:", nomeField,
-                "Sobrenome:", sobrenomeField,
-                "CPF (xxx.xxx.xxx-xx):", cpfField,
-                "Data Nascimento (dd/mm/yyyy):", dataNascimentoField
-        };
+            Object[] message = {
+                    "Nome:", nomeField,
+                    "Sobrenome:", sobrenomeField,
+                    "CPF (xxx.xxx.xxx-xx):", cpfField,
+                    "Data Nascimento (dd/mm/yyyy):", dataNascimentoField
+            };
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Cadastrar Aluno", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String nome = nomeField.getText();
-            String sobrenome = sobrenomeField.getText();
-            String cpf = cpfField.getText();
-            String dataNascimento = dataNascimentoField.getText();
+            int option = JOptionPane.showConfirmDialog(this, message, "Cadastrar Aluno", JOptionPane.OK_CANCEL_OPTION);
 
-            if (nome.isEmpty() || sobrenome.isEmpty() || cpf.isEmpty() || dataNascimento.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                 return;
             }
 
-            Aluno aluno = new Aluno(nome, sobrenome, cpf, dataNascimento);
-            gerenciadorSistema.cadastrarAluno(aluno);
-            JOptionPane.showMessageDialog(this, "ALUNO CADASTRADO COM MATRICULA: " + aluno.getMatricula() + "!\n" + aluno.exibirInformacoes());
-            mostrarAlunos(); // Atualiza a lista
+            if (option == JOptionPane.OK_OPTION) {
+                String nome = nomeField.getText().trim();
+                String sobrenome = sobrenomeField.getText().trim();
+                String cpf = cpfField.getText().trim();
+                String dataNascimento = dataNascimentoField.getText().trim();
+
+                if (nome.isEmpty() || sobrenome.isEmpty() || cpf.isEmpty() || dataNascimento.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                if (!isCpfValido(cpf)) {
+                    JOptionPane.showMessageDialog(this, "Formato de CPF inválido! Use xxx.xxx.xxx-xx", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                if (!isDataValida(dataNascimento)) {
+                    JOptionPane.showMessageDialog(this, "Formato de data inválido! Use dd/mm/yyyy.", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                Aluno aluno = new Aluno(nome, sobrenome, cpf, dataNascimento);
+
+                boolean sucesso = gerenciadorSistema.cadastrarAluno(aluno);
+
+                if (sucesso) {
+                    JOptionPane.showMessageDialog(this, "ALUNO CADASTRADO COM MATRICULA: " + aluno.getMatricula() + "!\n" + aluno.exibirInformacoes());
+                    mostrarAlunos();
+                    break;
+                } else {
+                    JOptionPane.showMessageDialog(this, "Erro: Já existe um aluno com este CPF.", "Erro de Duplicidade", JOptionPane.ERROR_MESSAGE);
+                }
+            }
         }
     }
 
@@ -145,9 +171,26 @@ public class AlunoPanel extends JPanel {
         if (alunoSelecionado != null && cursoSelecionado != null) {
             alunoSelecionado.matricularEmCurso(cursoSelecionado);
             JOptionPane.showMessageDialog(this, "Aluno " + alunoSelecionado.getNome() + " matriculado no curso " + cursoSelecionado.getNome() + "!");
-            mostrarAlunos(); // Atualiza a exibição do aluno
+            mostrarAlunos();
         } else {
             JOptionPane.showMessageDialog(this, "Aluno ou curso não encontrados. Verifique os dados informados.", "Erro de Matrícula", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private boolean isCpfValido(String cpf) {
+        if (cpf == null) return false;
+        String cpfRegex = "^\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}$";
+        return cpf.matches(cpfRegex);
+    }
+
+    private boolean isDataValida(String data) {
+        if (data == null) return false;
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate.parse(data, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
         }
     }
 }

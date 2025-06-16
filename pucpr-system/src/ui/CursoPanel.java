@@ -22,7 +22,6 @@ public class CursoPanel extends JPanel {
         add(scrollPane, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
-
         JButton btnMostrarCursos = new JButton("Mostrar Cursos");
         btnMostrarCursos.addActionListener(e -> mostrarCursos());
         buttonPanel.add(btnMostrarCursos);
@@ -31,7 +30,7 @@ public class CursoPanel extends JPanel {
         btnCriarCurso.addActionListener(e -> criarCurso());
         buttonPanel.add(btnCriarCurso);
 
-        JButton btnBuscarCurso = new JButton("Buscar Curso");
+        JButton btnBuscarCurso = new JButton("Buscar Curso por ID"); // Texto do botão atualizado
         btnBuscarCurso.addActionListener(e -> buscarCurso());
         buttonPanel.add(btnBuscarCurso);
 
@@ -65,36 +64,40 @@ public class CursoPanel extends JPanel {
     }
 
     private void criarCurso() {
-        JTextField nomeCursoField = new JTextField();
-        JTextField codigoCursoField = new JTextField();
+        while (true) {
+            JTextField nomeCursoField = new JTextField();
+            // Campo de código removido
+            Object[] message = { "Nome do Curso:", nomeCursoField };
 
-        Object[] message = {
-                "Nome do Curso:", nomeCursoField,
-                "Código do Curso:", codigoCursoField
-        };
+            int option = JOptionPane.showConfirmDialog(this, message, "Criar Curso", JOptionPane.OK_CANCEL_OPTION);
 
-        int option = JOptionPane.showConfirmDialog(this, message, "Criar Curso", JOptionPane.OK_CANCEL_OPTION);
-        if (option == JOptionPane.OK_OPTION) {
-            String nomeCurso = nomeCursoField.getText();
-            String codigoCurso = codigoCursoField.getText();
-
-            if (nomeCurso.isEmpty() || codigoCurso.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Todos os campos são obrigatórios!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+            if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
                 return;
             }
 
-            Curso curso = new Curso(nomeCurso, codigoCurso);
-            gerenciadorSistema.criarCurso(curso);
-            JOptionPane.showMessageDialog(this, "CURSO CRIADO!\n" + curso.toString());
-            mostrarCursos(); // Atualiza a lista
+            if (option == JOptionPane.OK_OPTION) {
+                String nomeCurso = nomeCursoField.getText().trim();
+                if (nomeCurso.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "O nome do curso é obrigatório!", "Erro de Cadastro", JOptionPane.ERROR_MESSAGE);
+                    continue;
+                }
+
+                Curso curso = new Curso(nomeCurso); // Usa o novo construtor
+                gerenciadorSistema.criarCurso(curso);
+
+                JOptionPane.showMessageDialog(this, "CURSO CRIADO COM ID: " + curso.getId() + "!\n" + curso.toString());
+                mostrarCursos();
+                break;
+            }
         }
     }
 
     private void buscarCurso() {
-        String codigoBusca = JOptionPane.showInputDialog(this, "Digite o código do curso para buscar:");
-        if (codigoBusca != null && !codigoBusca.trim().isEmpty()) {
+        String idBusca = JOptionPane.showInputDialog(this, "Digite o ID do curso para buscar:"); // Pede o ID
+        if (idBusca != null && !idBusca.trim().isEmpty()) {
             try {
-                String infoCurso = gerenciadorSistema.buscaCurso(codigoBusca);
+                // A busca ainda usa o método que recebe uma String
+                String infoCurso = gerenciadorSistema.buscaCurso(idBusca.trim());
                 JOptionPane.showMessageDialog(this, infoCurso);
             } catch (CursoNaoEncontrado e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Curso Não Encontrado", JOptionPane.WARNING_MESSAGE);
@@ -104,19 +107,19 @@ public class CursoPanel extends JPanel {
 
     private void adicionarDisciplinaACurso() {
         if (gerenciadorSistema.getCursos().isEmpty() || gerenciadorSistema.getDisciplinas().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "É necessário ter cursos e disciplinas cadastradas para realizar esta operação.", "Operação Não Disponível", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "É necessário ter cursos e disciplinas cadastradas.", "Operação Não Disponível", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
-        String codigoCurso = JOptionPane.showInputDialog(this, "Digite o código do curso para adicionar a disciplina:");
-        if (codigoCurso == null || codigoCurso.trim().isEmpty()) return;
+        String idCurso = JOptionPane.showInputDialog(this, "Digite o ID do curso:"); // Pede o ID
+        if (idCurso == null || idCurso.trim().isEmpty()) return;
 
-        String codigoDisciplina = JOptionPane.showInputDialog(this, "Digite o código da disciplina a ser adicionada:");
-        if (codigoDisciplina == null || codigoDisciplina.trim().isEmpty()) return;
+        String idDisciplina = JOptionPane.showInputDialog(this, "Digite o ID da disciplina a ser adicionada:"); // Pede o ID
+        if (idDisciplina == null || idDisciplina.trim().isEmpty()) return;
 
         Curso cursoSelecionado = null;
         for (Curso c : gerenciadorSistema.getCursos()) {
-            if (c.getCodigo().equals(codigoCurso)) {
+            if (c.getCodigo().equals(idCurso.trim())) {
                 cursoSelecionado = c;
                 break;
             }
@@ -124,7 +127,7 @@ public class CursoPanel extends JPanel {
 
         Disciplina disciplinaSelecionada = null;
         for (Disciplina d : gerenciadorSistema.getDisciplinas()) {
-            if (d.getCodigo().equals(codigoDisciplina)) {
+            if (d.getCodigo().equals(idDisciplina.trim())) {
                 disciplinaSelecionada = d;
                 break;
             }
@@ -133,9 +136,9 @@ public class CursoPanel extends JPanel {
         if (cursoSelecionado != null && disciplinaSelecionada != null) {
             cursoSelecionado.adicionarDisciplina(disciplinaSelecionada);
             JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " adicionada ao curso " + cursoSelecionado.getNome() + "!");
-            mostrarCursos(); // Atualiza a exibição do curso
+            mostrarCursos();
         } else {
-            JOptionPane.showMessageDialog(this, "Curso ou disciplina não encontrados. Verifique os códigos informados.", "Erro de Adição", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Curso ou disciplina não encontrados. Verifique os IDs informados.", "Erro de Adição", JOptionPane.WARNING_MESSAGE);
         }
     }
 }
