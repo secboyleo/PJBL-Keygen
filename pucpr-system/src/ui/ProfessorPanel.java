@@ -105,7 +105,6 @@ public class ProfessorPanel extends JPanel {
                 try {
                     double salario = Double.parseDouble(salarioStr);
                     Professor professor = new Professor(nome, sobrenome, cpf, dataNascimento, salario);
-
                     boolean sucesso = gerenciadorSistema.cadastrarProfessor(professor);
 
                     if (sucesso) {
@@ -115,7 +114,6 @@ public class ProfessorPanel extends JPanel {
                     } else {
                         JOptionPane.showMessageDialog(this, "Erro: Já existe um professor com este CPF.", "Erro de Duplicidade", JOptionPane.ERROR_MESSAGE);
                     }
-
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Salário inválido. Digite um número.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
                 }
@@ -144,31 +142,37 @@ public class ProfessorPanel extends JPanel {
         String cpfProfessor = JOptionPane.showInputDialog(this, "Digite o CPF do professor:");
         if (cpfProfessor == null || cpfProfessor.trim().isEmpty()) return;
 
-        String codigoDisciplina = JOptionPane.showInputDialog(this, "Digite o código da disciplina a ser atribuída:");
-        if (codigoDisciplina == null || codigoDisciplina.trim().isEmpty()) return;
+        String idDisciplinaStr = JOptionPane.showInputDialog(this, "Digite o ID da disciplina a ser atribuída:");
+        if (idDisciplinaStr == null || idDisciplinaStr.trim().isEmpty()) return;
 
-        Professor professorSelecionado = null;
-        for (Professor p : gerenciadorSistema.getProfessores()) {
-            if (p.getCpf().equals(cpfProfessor)) {
-                professorSelecionado = p;
-                break;
+        try {
+            int idDisciplina = Integer.parseInt(idDisciplinaStr);
+
+            Professor professorSelecionado = null;
+            for (Professor p : gerenciadorSistema.getProfessores()) {
+                if (p.getCpf().equals(cpfProfessor.trim())) {
+                    professorSelecionado = p;
+                    break;
+                }
             }
-        }
 
-        Disciplina disciplinaSelecionada = null;
-        for (Disciplina d : gerenciadorSistema.getDisciplinas()) {
-            if (d.getCodigo().equals(codigoDisciplina)) {
-                disciplinaSelecionada = d;
-                break;
+            Disciplina disciplinaSelecionada = null;
+            for (Disciplina d : gerenciadorSistema.getDisciplinas()) {
+                if (d.getId() == idDisciplina) {
+                    disciplinaSelecionada = d;
+                    break;
+                }
             }
-        }
 
-        if (professorSelecionado != null && disciplinaSelecionada != null) {
-            professorSelecionado.adicionarDisciplina(disciplinaSelecionada);
-            JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " atribuída ao professor " + professorSelecionado.getNome() + "!");
-            mostrarProfessores();
-        } else {
-            JOptionPane.showMessageDialog(this, "Professor ou disciplina não encontrados. Verifique os dados informados.", "Erro de Atribuição", JOptionPane.WARNING_MESSAGE);
+            if (professorSelecionado != null && disciplinaSelecionada != null) {
+                professorSelecionado.adicionarDisciplina(disciplinaSelecionada);
+                JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " atribuída ao professor " + professorSelecionado.getNome() + "!");
+                mostrarProfessores();
+            } else {
+                JOptionPane.showMessageDialog(this, "Professor ou disciplina não encontrados. Verifique os dados informados.", "Erro de Atribuição", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID da disciplina inválido. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
         }
     }
 

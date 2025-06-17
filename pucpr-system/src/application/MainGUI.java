@@ -25,7 +25,6 @@ public class MainGUI extends JFrame {
 
         // adicionar um WindowListener para salvar os dados ao fechar
         addWindowListener(new WindowAdapter() {
-            @Override
             public void windowClosing(WindowEvent e) {
                 gerenciadorSistema.salvarDados(DADOS_ARQUIVO);
                 JOptionPane.showMessageDialog(MainGUI.this, "Dados salvos. Saindo do sistema. Até mais!");

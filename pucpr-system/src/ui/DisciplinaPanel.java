@@ -30,7 +30,7 @@ public class DisciplinaPanel extends JPanel {
         btnCriarDisciplina.addActionListener(e -> criarDisciplina());
         buttonPanel.add(btnCriarDisciplina);
 
-        JButton btnBuscarDisciplina = new JButton("Buscar Disciplina por ID"); // Texto do botão atualizado
+        JButton btnBuscarDisciplina = new JButton("Buscar Disciplina por ID");
         btnBuscarDisciplina.addActionListener(e -> buscarDisciplina());
         buttonPanel.add(btnBuscarDisciplina);
 
@@ -55,7 +55,6 @@ public class DisciplinaPanel extends JPanel {
             JTextField nomeDisciplinaField = new JTextField();
             JTextField cargaHorariaField = new JTextField();
 
-            // Campo de código removido
             Object[] message = {
                     "Nome da Disciplina:", nomeDisciplinaField,
                     "Carga Horária:", cargaHorariaField
@@ -78,13 +77,12 @@ public class DisciplinaPanel extends JPanel {
 
                 try {
                     int cargaHoraria = Integer.parseInt(cargaHorariaStr);
-                    Disciplina disciplina = new Disciplina(nomeDisciplina, cargaHoraria); // Usa o novo construtor
+                    Disciplina disciplina = new Disciplina(nomeDisciplina, cargaHoraria);
                     gerenciadorSistema.criarDisciplina(disciplina);
 
                     JOptionPane.showMessageDialog(this, "DISCIPLINA CRIADA COM ID: " + disciplina.getId() + "!\n" + disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h");
                     mostrarDisciplinas();
                     break;
-
                 } catch (NumberFormatException e) {
                     JOptionPane.showMessageDialog(this, "Carga horária inválida. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
                 }
@@ -93,11 +91,14 @@ public class DisciplinaPanel extends JPanel {
     }
 
     private void buscarDisciplina() {
-        String idBusca = JOptionPane.showInputDialog(this, "Digite o ID da disciplina para buscar:"); // Pede o ID
-        if (idBusca != null && !idBusca.trim().isEmpty()) {
+        String idBuscaStr = JOptionPane.showInputDialog(this, "Digite o ID da disciplina para buscar:");
+        if (idBuscaStr != null && !idBuscaStr.trim().isEmpty()) {
             try {
-                String infoDisciplina = gerenciadorSistema.buscaDiscplina(idBusca.trim());
+                int idBusca = Integer.parseInt(idBuscaStr);
+                String infoDisciplina = gerenciadorSistema.buscaDiscplina(idBusca);
                 JOptionPane.showMessageDialog(this, infoDisciplina);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID inválido. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
             } catch (DiscplinaNaoEncontrada e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Disciplina Não Encontrada", JOptionPane.WARNING_MESSAGE);
             }

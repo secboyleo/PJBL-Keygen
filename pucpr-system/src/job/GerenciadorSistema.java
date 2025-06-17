@@ -60,19 +60,14 @@ public class GerenciadorSistema implements Serializable{
     }
 
     public boolean criarCurso(Curso curso){
-        // A verificação de duplicidade por código do usuário foi removida.
-        // O ID garantirá a unicidade.
         curso.setId(this.nextCursoId);
-        curso.setCodigo(String.valueOf(this.nextCursoId)); // Define o código com base no ID
         this.nextCursoId++;
         cursos.add(curso);
         return true;
     }
 
     public boolean criarDisciplina(Disciplina disciplina){
-        // A verificação de duplicidade por código do usuário foi removida.
         disciplina.setId(this.nextDisciplinaId);
-        disciplina.setCodigo(String.valueOf(this.nextDisciplinaId)); // Define o código com base no ID
         this.nextDisciplinaId++;
         disciplinas.add(disciplina);
         return true;
@@ -92,19 +87,18 @@ public class GerenciadorSistema implements Serializable{
         throw new ProfessorNaoEncontrado("Professor com cpf: " + cpf + ", nao foi encontrado");
     }
 
-    // A busca ainda funciona com o código, que agora é a string do ID.
-    public String buscaCurso(String codigo) throws CursoNaoEncontrado {
+    public String buscaCurso(int id) throws CursoNaoEncontrado {
         for(Curso curso : cursos){
-            if(curso.getCodigo().equals(codigo)){ return curso.toString(); }
+            if(curso.getId() == id){ return curso.toString(); }
         }
-        throw new CursoNaoEncontrado("Curso com ID: " + codigo + ", nao foi encontrado");
+        throw new CursoNaoEncontrado("Curso com ID: " + id + ", nao foi encontrado");
     }
 
-    public String buscaDiscplina(String codigo) throws DiscplinaNaoEncontrada {
+    public String buscaDiscplina(int id) throws DiscplinaNaoEncontrada {
         for(Disciplina disciplina : disciplinas){
-            if(disciplina.getCodigo().equals(codigo)){ return disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h";}
+            if(disciplina.getId() == id){ return disciplina.toString() + " | Carga Horária: " + disciplina.getCargaHoraria() + "h";}
         }
-        throw new DiscplinaNaoEncontrada("Discplina com ID: " + codigo + ", nao encontrada");
+        throw new DiscplinaNaoEncontrada("Disciplina com ID: " + id + ", nao encontrada");
     }
 
     //PERSISTENCIA DE DADOOOOSSSSSSSSSSSSSSSS (somente para os tung tung tungzitos)

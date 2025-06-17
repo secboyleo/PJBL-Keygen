@@ -30,7 +30,7 @@ public class CursoPanel extends JPanel {
         btnCriarCurso.addActionListener(e -> criarCurso());
         buttonPanel.add(btnCriarCurso);
 
-        JButton btnBuscarCurso = new JButton("Buscar Curso por ID"); // Texto do botão atualizado
+        JButton btnBuscarCurso = new JButton("Buscar Curso por ID");
         btnBuscarCurso.addActionListener(e -> buscarCurso());
         buttonPanel.add(btnBuscarCurso);
 
@@ -66,7 +66,6 @@ public class CursoPanel extends JPanel {
     private void criarCurso() {
         while (true) {
             JTextField nomeCursoField = new JTextField();
-            // Campo de código removido
             Object[] message = { "Nome do Curso:", nomeCursoField };
 
             int option = JOptionPane.showConfirmDialog(this, message, "Criar Curso", JOptionPane.OK_CANCEL_OPTION);
@@ -82,7 +81,7 @@ public class CursoPanel extends JPanel {
                     continue;
                 }
 
-                Curso curso = new Curso(nomeCurso); // Usa o novo construtor
+                Curso curso = new Curso(nomeCurso);
                 gerenciadorSistema.criarCurso(curso);
 
                 JOptionPane.showMessageDialog(this, "CURSO CRIADO COM ID: " + curso.getId() + "!\n" + curso.toString());
@@ -93,12 +92,14 @@ public class CursoPanel extends JPanel {
     }
 
     private void buscarCurso() {
-        String idBusca = JOptionPane.showInputDialog(this, "Digite o ID do curso para buscar:"); // Pede o ID
-        if (idBusca != null && !idBusca.trim().isEmpty()) {
+        String idBuscaStr = JOptionPane.showInputDialog(this, "Digite o ID do curso para buscar:");
+        if (idBuscaStr != null && !idBuscaStr.trim().isEmpty()) {
             try {
-                // A busca ainda usa o método que recebe uma String
-                String infoCurso = gerenciadorSistema.buscaCurso(idBusca.trim());
+                int idBusca = Integer.parseInt(idBuscaStr);
+                String infoCurso = gerenciadorSistema.buscaCurso(idBusca);
                 JOptionPane.showMessageDialog(this, infoCurso);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "ID inválido. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
             } catch (CursoNaoEncontrado e) {
                 JOptionPane.showMessageDialog(this, e.getMessage(), "Curso Não Encontrado", JOptionPane.WARNING_MESSAGE);
             }
@@ -111,34 +112,41 @@ public class CursoPanel extends JPanel {
             return;
         }
 
-        String idCurso = JOptionPane.showInputDialog(this, "Digite o ID do curso:"); // Pede o ID
-        if (idCurso == null || idCurso.trim().isEmpty()) return;
+        String idCursoStr = JOptionPane.showInputDialog(this, "Digite o ID do curso:");
+        if (idCursoStr == null || idCursoStr.trim().isEmpty()) return;
 
-        String idDisciplina = JOptionPane.showInputDialog(this, "Digite o ID da disciplina a ser adicionada:"); // Pede o ID
-        if (idDisciplina == null || idDisciplina.trim().isEmpty()) return;
+        String idDisciplinaStr = JOptionPane.showInputDialog(this, "Digite o ID da disciplina a ser adicionada:");
+        if (idDisciplinaStr == null || idDisciplinaStr.trim().isEmpty()) return;
 
-        Curso cursoSelecionado = null;
-        for (Curso c : gerenciadorSistema.getCursos()) {
-            if (c.getCodigo().equals(idCurso.trim())) {
-                cursoSelecionado = c;
-                break;
+        try {
+            int idCurso = Integer.parseInt(idCursoStr);
+            int idDisciplina = Integer.parseInt(idDisciplinaStr);
+
+            Curso cursoSelecionado = null;
+            for (Curso c : gerenciadorSistema.getCursos()) {
+                if (c.getId() == idCurso) {
+                    cursoSelecionado = c;
+                    break;
+                }
             }
-        }
 
-        Disciplina disciplinaSelecionada = null;
-        for (Disciplina d : gerenciadorSistema.getDisciplinas()) {
-            if (d.getCodigo().equals(idDisciplina.trim())) {
-                disciplinaSelecionada = d;
-                break;
+            Disciplina disciplinaSelecionada = null;
+            for (Disciplina d : gerenciadorSistema.getDisciplinas()) {
+                if (d.getId() == idDisciplina) {
+                    disciplinaSelecionada = d;
+                    break;
+                }
             }
-        }
 
-        if (cursoSelecionado != null && disciplinaSelecionada != null) {
-            cursoSelecionado.adicionarDisciplina(disciplinaSelecionada);
-            JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " adicionada ao curso " + cursoSelecionado.getNome() + "!");
-            mostrarCursos();
-        } else {
-            JOptionPane.showMessageDialog(this, "Curso ou disciplina não encontrados. Verifique os IDs informados.", "Erro de Adição", JOptionPane.WARNING_MESSAGE);
+            if (cursoSelecionado != null && disciplinaSelecionada != null) {
+                cursoSelecionado.adicionarDisciplina(disciplinaSelecionada);
+                JOptionPane.showMessageDialog(this, "Disciplina " + disciplinaSelecionada.getNome() + " adicionada ao curso " + cursoSelecionado.getNome() + "!");
+                mostrarCursos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Curso ou disciplina não encontrados. Verifique os IDs informados.", "Erro de Adição", JOptionPane.WARNING_MESSAGE);
+            }
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID inválido. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

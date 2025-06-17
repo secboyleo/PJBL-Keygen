@@ -19,14 +19,12 @@ public class AlunoPanel extends JPanel {
         this.gerenciadorSistema = gerenciadorSistema;
         setLayout(new BorderLayout());
 
-        // Área de exibição
         displayArea = new JTextArea();
         displayArea.setEditable(false);
         JScrollPane scrollPane = new JScrollPane(displayArea);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Painel de botões
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5)); // 1 linha, 4 colunas, 5px de espaçamento
+        JPanel buttonPanel = new JPanel(new GridLayout(1, 4, 5, 5));
 
         JButton btnMostrarAlunos = new JButton("Mostrar Alunos");
         btnMostrarAlunos.addActionListener(e -> mostrarAlunos());
@@ -44,12 +42,11 @@ public class AlunoPanel extends JPanel {
         btnMatricularAlunoEmCurso.addActionListener(e -> matricularAlunoEmCurso());
         buttonPanel.add(btnMatricularAlunoEmCurso);
 
-
-        add(buttonPanel, BorderLayout.NORTH); // adiciona na parte superior
+        add(buttonPanel, BorderLayout.NORTH);
     }
 
     private void mostrarAlunos() {
-        displayArea.setText(""); // Limpa a área de exibição
+        displayArea.setText("");
         if (gerenciadorSistema.getAlunos().isEmpty()) {
             displayArea.append("Nenhum aluno cadastrado.\n");
         } else {
@@ -103,7 +100,6 @@ public class AlunoPanel extends JPanel {
                 }
 
                 Aluno aluno = new Aluno(nome, sobrenome, cpf, dataNascimento);
-
                 boolean sucesso = gerenciadorSistema.cadastrarAluno(aluno);
 
                 if (sucesso) {
@@ -141,39 +137,38 @@ public class AlunoPanel extends JPanel {
         String matriculaAlunoStr = JOptionPane.showInputDialog(this, "Digite a matrícula do aluno:");
         if (matriculaAlunoStr == null || matriculaAlunoStr.trim().isEmpty()) return;
 
-        int matriculaAluno;
+        String idCursoStr = JOptionPane.showInputDialog(this, "Digite o ID do curso para matricular:");
+        if (idCursoStr == null || idCursoStr.trim().isEmpty()) return;
+
         try {
-            matriculaAluno = Integer.parseInt(matriculaAlunoStr);
+            int matriculaAluno = Integer.parseInt(matriculaAlunoStr);
+            int idCurso = Integer.parseInt(idCursoStr);
+
+            Aluno alunoSelecionado = null;
+            for (Aluno a : gerenciadorSistema.getAlunos()) {
+                if (a.getMatricula() == matriculaAluno) {
+                    alunoSelecionado = a;
+                    break;
+                }
+            }
+
+            Curso cursoSelecionado = null;
+            for (Curso c : gerenciadorSistema.getCursos()) {
+                if (c.getId() == idCurso) {
+                    cursoSelecionado = c;
+                    break;
+                }
+            }
+
+            if (alunoSelecionado != null && cursoSelecionado != null) {
+                alunoSelecionado.matricularEmCurso(cursoSelecionado);
+                JOptionPane.showMessageDialog(this, "Aluno " + alunoSelecionado.getNome() + " matriculado no curso " + cursoSelecionado.getNome() + "!");
+                mostrarAlunos();
+            } else {
+                JOptionPane.showMessageDialog(this, "Aluno ou curso não encontrados. Verifique os dados informados.", "Erro de Matrícula", JOptionPane.WARNING_MESSAGE);
+            }
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Matrícula inválida. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        String codigoCurso = JOptionPane.showInputDialog(this, "Digite o código do curso para matricular:");
-        if (codigoCurso == null || codigoCurso.trim().isEmpty()) return;
-
-        Aluno alunoSelecionado = null;
-        for (Aluno a : gerenciadorSistema.getAlunos()) {
-            if (a.getMatricula() == matriculaAluno) {
-                alunoSelecionado = a;
-                break;
-            }
-        }
-
-        Curso cursoSelecionado = null;
-        for (Curso c : gerenciadorSistema.getCursos()) {
-            if (c.getCodigo().equals(codigoCurso)) {
-                cursoSelecionado = c;
-                break;
-            }
-        }
-
-        if (alunoSelecionado != null && cursoSelecionado != null) {
-            alunoSelecionado.matricularEmCurso(cursoSelecionado);
-            JOptionPane.showMessageDialog(this, "Aluno " + alunoSelecionado.getNome() + " matriculado no curso " + cursoSelecionado.getNome() + "!");
-            mostrarAlunos();
-        } else {
-            JOptionPane.showMessageDialog(this, "Aluno ou curso não encontrados. Verifique os dados informados.", "Erro de Matrícula", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Matrícula ou ID do curso inválido. Digite um número inteiro.", "Erro de Entrada", JOptionPane.ERROR_MESSAGE);
         }
     }
 
