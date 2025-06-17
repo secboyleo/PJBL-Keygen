@@ -25,6 +25,6 @@ public class Aluno extends Pessoa implements Serializable {
 
     @Override
     public String exibirInformacoes() {
-        return "Nome Aluno: " + nome + " " + sobrenome + "\nCPF: " + cpf + "\nData Nascimento:" + dataNascimento + "\nMatricula: " + matricula + "\nCursos:\n" + cursos;
+        return "Nome Aluno: " + nome + " " + getSobrenome() + "\nCPF: " + cpf + "\nData Nascimento:" + getDataNascimento() + "\nMatricula: " + matricula + "\nCursos:\n" + cursos;
     }
 }

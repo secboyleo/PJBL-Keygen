@@ -29,7 +29,7 @@ public class Professor extends Pessoa implements Serializable {
     @Override
     public String exibirInformacoes() {
         // ID ADICIONADO NA EXIBIÇÃO
-        return "ID Professor: " + id + "\nNome Professor: " + nome + " " + sobrenome + "\nCPF: " + cpf + "\nData Nascimento:" + dataNascimento + "\nSalario: " + salario + "\nDisciplinas:\n" + disciplinas;
+        return "ID Professor: " + id + "\nNome Professor: " + nome + " " + getSobrenome() + "\nCPF: " + cpf + "\nData Nascimento:" + getDataNascimento() + "\nSalario: " + salario + "\nDisciplinas:\n" + disciplinas;
     }
 
     @Override
